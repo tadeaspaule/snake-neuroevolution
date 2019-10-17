@@ -17,6 +17,13 @@ class SnakeAgent {
     nn.addLayer(4,"softmax");
   }
   
+  public SnakeAgent(int mapX, int mapY, String[] lines) {
+    this.mapX = mapX;
+    this.mapY = mapY;
+    reset();
+    nn = new NeuralNet(lines);     
+  }
+  
   public void play(int nEpisodes, int nSteps) {
      for (int ep = 0; ep < nEpisodes; ep++) {
        reset();
@@ -31,28 +38,32 @@ class SnakeAgent {
     snake = new Snake(mapX,mapY);
   }
   
+  public String[] getSaveStrings() {
+    return nn.getSaveStrings(); 
+  }
+  
   public void copyNN(SnakeAgent another) {
     nn = another.nn.getCopy();
   }
   
   public void makeMove() {
-    // score += 1; // for staying alive
+    // score -= 1; // for staying alive
     float[] obs = snake.getObservation();
     float[] actionVals = nn.predict(obs);
     int i = 0;
     for (int j = 1; j < actionVals.length; j++) {
       if (actionVals[j] > actionVals[i]) i = j; 
     }
-    if (i != lastMove && i != beforeLastMove) {
-       // trying to prevent the "go back and forth in one spot" behaviour
-       score += 15;
-    }
+    //if (i != lastMove && i != beforeLastMove) {
+    //   // trying to prevent the "go back and forth in one spot" behaviour
+    //   score += 15;
+    //}
     beforeLastMove = lastMove;
     lastMove = i;
     int status = snake.action(i);
     if (status == 1) {
       // ate food
-      score += 50;
+      score += 350;
     }
     else if (status == -1) {
       // died

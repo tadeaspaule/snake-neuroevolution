@@ -10,6 +10,12 @@ class Population {
     }
   }
   
+  public Population(int nAgents, int mapX, int mapY, String[] lines) {
+    for (int i = 0; i < nAgents; i++) {
+      agents.add(new SnakeAgent(mapX,mapY,lines));
+    }
+  }
+  
   public void evolve(float chance, int nEpisodes, int nSteps) {
      for (SnakeAgent sa : agents) {
         sa.play(nEpisodes,nSteps);

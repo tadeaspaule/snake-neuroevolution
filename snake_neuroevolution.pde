@@ -6,28 +6,29 @@ Population pop;
 boolean drawingBest = false;
 int generation = 0;
 int step = 0;
-int nSteps = 150;
-int genStep = 5;
+int nSteps = 100;
+int genStep = 10;
 
 void setup() {
   size(500,500);
   frameRate(15);
   textAlign(CENTER,CENTER);
   textSize(17);
-  pop = new Population(50,w,h);
+  pop = new Population(140,w,h,loadStrings("weights/gen1550.txt"));
 }
 
 void draw() {
   if (!drawingBest || (keyPressed && key == 's')) {
     int m1 = millis();
     for (int i = 0; i < genStep; i++) {
-      pop.evolve(0.6,10,200);
+      pop.evolve(0.3,10,200);
       generation++;
     }
     int m2 = millis();
     println("Evolution took " + (m2-m1) + "ms");
     snakeAgent = pop.getBest();
     snakeAgent.reset();
+    if (generation % 50 == 0) saveStrings("weights/gen"+generation+".txt",snakeAgent.getSaveStrings());
     drawingBest = true;
     step = 0;
     return;
