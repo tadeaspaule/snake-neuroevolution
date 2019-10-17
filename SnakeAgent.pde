@@ -1,12 +1,58 @@
 class SnakeAgent {
-  Snake snake;
-  NeuralNet nn;
+  int mapX;
+  int mapY;
+  public Snake snake;
+  protected NeuralNet nn;
+  public int score = 0;
   
   public SnakeAgent(int mapX, int mapY) {
-    snake = new Snake(mapX,mapY);
+    this.mapX = mapX;
+    this.mapY = mapY;
+    reset();
     nn = new NeuralNet(24);
     nn.addLayer(32,"sigmoid");
     nn.addLayer(16,"sigmoid");
     nn.addLayer(4,"softmax");
+  }
+  
+  public void play(int nEpisodes, int nSteps) {
+     for (int ep = 0; ep < nEpisodes; ep++) {
+       reset();
+       for (int step = 0; step < nSteps; step++) {
+          if (snake.dead) return;
+          makeMove();
+       }
+     }
+  }
+  
+  public void reset() {
+    snake = new Snake(mapX,mapY);
+  }
+  
+  public void copyNN(SnakeAgent another) {
+    nn = another.nn.getCopy();
+  }
+  
+  public void makeMove() {
+    // score += 1; // for staying alive
+    float[] obs = snake.getObservation();
+    float[] actionVals = nn.predict(obs);
+    int i = 0;
+    for (int j = 1; j < actionVals.length; j++) {
+      if (actionVals[j] > actionVals[i]) i = j; 
+    }
+    int status = snake.action(i);
+    if (status == 1) {
+      // ate food
+      score += 50;
+    }
+    else if (status == -1) {
+      // died
+      score -= 350;
+    }
+  }
+  
+  public void mutate(float chance) {
+    nn.mutate(chance); 
   }
 }

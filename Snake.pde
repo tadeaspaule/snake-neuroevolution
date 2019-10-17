@@ -21,30 +21,32 @@ class Snake {
      generateFood();
   }
   
-  void action(int choice) {
-    if (dead) return; 
-    if (choice == 0) move(0,-1);
-    else if (choice == 1) move(1,0);
-    else if (choice == 2) move(0,1);
-    else if (choice == 3) move(-1,0);
+  int action(int choice) {
+    if (dead) return -1; 
+    if (choice == 0) return move(0,-1);
+    else if (choice == 1) return move(1,0);
+    else if (choice == 2) return move(0,1);
+    else return move(-1,0);
   }
   
-  void move(int vx, int vy) {
+  int move(int vx, int vy) {
     x += vx;
     y += vy;
     // check if hit a wall or body
     if (x < 0 || x >= mapX || y < 0 || y >= mapY || inBody(x,y)) {
       dead = true;
-      return;
+      return -1;
     }
+    body.add(0,new Point(x,y));
     // check if ate food
-    if (food.equals(x,y)){ 
+    if (food.equals(x,y)){
       generateFood();
+      return 1;
     }
     else {
       body.remove(body.size()-1);
+      return 0;
     }
-    body.add(0,new Point(x,y));
   }
   
   boolean inBody(int x, int y) {
@@ -73,7 +75,7 @@ class Snake {
      food = new Point(n/mapY,n%mapX);
   }
 
-  float[] getObservation() {
+  public float[] getObservation() {
     int xdif = mapX-x-1;
     int ydif = mapY-y-1;
     obs[0] = min(x,y) + 1;      // top left

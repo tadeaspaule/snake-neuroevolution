@@ -1,6 +1,6 @@
 class NeuralNet {
   
-  ArrayList<Layer> layers = new ArrayList<Layer>();
+  protected ArrayList<Layer> layers = new ArrayList<Layer>();
   int inputN;
   int lastNnodes;
   
@@ -9,14 +9,28 @@ class NeuralNet {
     lastNnodes = inputNodes;
   }
   
+  public NeuralNet getCopy() {
+     NeuralNet n = new NeuralNet(inputN);
+     for (Layer l : layers) {
+        n.layers.add(l.getCopy());
+     }
+     return n;
+  }
+  
   public void addLayer(int nNodes, String activation) {
     layers.add(new MultLayer(lastNnodes,nNodes));
     layers.add(new FuncLayer(activation));
+    lastNnodes = nNodes;
   }
   
   public void addLayer(int nNodes, String activation, float activationParam) {
-    layers.add(new MultLayer(lastNnodes,nNodes));
+    layers.add(new MultLayer(nNodes,lastNnodes));
     layers.add(new FuncLayer(activation,activationParam));
+    lastNnodes = nNodes;
+  }
+  
+  public void mutate(float chance) {
+    for (Layer l : layers) l.mutate(chance); 
   }
   
   public float[] predict(float[] input) {
@@ -31,6 +45,7 @@ class NeuralNet {
 abstract class Layer {
   public abstract float[] applyLayer(float[] input);
   public abstract void mutate(float chance);
+  public abstract Layer getCopy();
 }
 
 class FuncLayer extends Layer {
@@ -40,6 +55,10 @@ class FuncLayer extends Layer {
   
   public FuncLayer(String method) {
      this.method = method;
+  }
+  
+  public Layer getCopy() {
+    return new FuncLayer(method,extraParam); 
   }
   
   public FuncLayer(String method, float param) {
@@ -86,7 +105,7 @@ class FuncLayer extends Layer {
 
 class MultLayer extends Layer {
   
-  float[][] matrix;
+  protected float[][] matrix;
   int nNodes;
   
   public MultLayer(int inNodes, int outNodes) {
@@ -97,6 +116,16 @@ class MultLayer extends Layer {
          matrix[y][x] = random(-1,1);
        }
      }
+  }
+  
+  public Layer getCopy() {
+    MultLayer ml = new MultLayer(matrix[0].length,matrix.length); 
+    for (int y = 0; y < matrix.length; y++) {
+       for (int x = 0; x < matrix[0].length; x++) {
+         ml.matrix[y][x] = matrix[y][x];
+       }
+     }
+    return ml;
   }
   
   public void mutate(float chance) {
