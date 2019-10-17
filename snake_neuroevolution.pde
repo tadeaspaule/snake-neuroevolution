@@ -6,8 +6,10 @@ Population pop;
 boolean drawingBest = false;
 int generation = 0;
 int step = 0;
-int nSteps = 100;
+int nSteps = 200;
 int genStep = 10;
+
+int screenCount = 0;
 
 void setup() {
   size(500,500);
@@ -37,7 +39,9 @@ void draw() {
   drawGrid();
   drawFood();
   drawSnake();
+  fill(255);
   text("Generation " + generation + "\nstep " + step + "\nPress 's' to skip",width/2,height-50);
+  
   snakeAgent.makeMove();
   if (snakeAgent.snake.dead || step >= nSteps) {
      snakeAgent.score = 0;
@@ -47,7 +51,7 @@ void draw() {
 }
 
 void drawSnake() {
-  fill(255);
+  fill(180,180,255);
   noStroke();
   for (Point p : snakeAgent.snake.body) {
     rect(p.x*blockSize,p.y*blockSize,blockSize,blockSize);
