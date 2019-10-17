@@ -4,6 +4,8 @@ class SnakeAgent {
   public Snake snake;
   protected NeuralNet nn;
   public int score = 0;
+  int lastMove = -1;
+  int beforeLastMove = -1;
   
   public SnakeAgent(int mapX, int mapY) {
     this.mapX = mapX;
@@ -41,6 +43,12 @@ class SnakeAgent {
     for (int j = 1; j < actionVals.length; j++) {
       if (actionVals[j] > actionVals[i]) i = j; 
     }
+    if (i != lastMove && i != beforeLastMove) {
+       // trying to prevent the "go back and forth in one spot" behaviour
+       score += 15;
+    }
+    beforeLastMove = lastMove;
+    lastMove = i;
     int status = snake.action(i);
     if (status == 1) {
       // ate food
