@@ -4,9 +4,14 @@
 *Like with the great Keras library, I wanted to be able to build neural networks with just a few lines*
 ```java
 nn = new NeuralNet(24);
+// add Dense layers with activation functions
 nn.addLayer(32,"sigmoid");
-nn.addLayer(16,"sigmoid");
 nn.addLayer(4,"softmax");
+// add layers and activation functions separately
+nn.addLayer(32);
+nn.addLayer("sigmoid");
+// add Dropout layers
+nn.addLayer("dropout",0.2);
 ```
 #### Activation functions supported
 - sigmoid
