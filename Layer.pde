@@ -57,7 +57,13 @@ class FuncLayer extends Layer {
         for (int i = 0; i < input.length; i++) {
           input[i] = (exp(input[i])-exp(-input[i]))/(exp(input[i])+exp(-input[i]));
         }    
-        break;  
+        break;
+      case "dropout":
+        float chance = extraParam <= 0 ? 0.3 : extraParam;
+        for (int i = 0; i < input.length; i++) {
+          input[i] = random(1) < chance ? 0 : input[i];
+        }    
+        break;
     }
     return input;
   }

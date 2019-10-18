@@ -52,6 +52,7 @@ class NeuralNet {
      return n;
   }
   
+  // ---- add Dense layer with activation function ----
   public void addLayer(int nNodes, String activation) {
     layers.add(new MultLayer(lastNnodes,nNodes));
     layers.add(new FuncLayer(activation));
@@ -62,6 +63,21 @@ class NeuralNet {
     layers.add(new MultLayer(nNodes,lastNnodes));
     layers.add(new FuncLayer(activation,activationParam));
     lastNnodes = nNodes;
+  }
+  
+  // ---- add Dense layer on its own ----
+  public void addLayer(int nNodes) {
+    layers.add(new MultLayer(lastNnodes,nNodes));
+    lastNnodes = nNodes;
+  }
+  
+  // ---- add FuncLayer on its own ----
+  public void addLayer(String activation) {
+    layers.add(new FuncLayer(activation));
+  }
+  
+  public void addLayer(String activation, float activationParam) {
+    layers.add(new FuncLayer(activation,activationParam));
   }
   
   public void mutate(float chance) {
